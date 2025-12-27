@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Search Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* Mobile Frame Simulation */
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Smooth screen transitions */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            background: white;
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen-hidden-right {
+            transform: translateX(100%);
+        }
+        
+        .screen-hidden-left {
+            transform: translateX(-100%);
+        }
+
+        /* Custom Input Styling to match sketch */
+        .sketch-input-group {
+            display: flex;
+            border: 1px solid #9ca3af; /* gray-400 */
+            border-radius: 4px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .sketch-input-group input {
+            flex: 1;
+            padding: 10px 12px;
+            outline: none;
+            border: none;
+            color: #1f2937;
+        }
+
+        .sketch-input-group .addon {
+            width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid #9ca3af;
+            background-color: #f9fafb;
+            color: #4b5563;
+        }
+
+        /* Hide default number spinners for custom look if needed, 
+           but standard is fine for production ready */
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- SCREEN 1: SEARCH FORM -->
+        <div id="screen-home" class="screen p-6">
+            
+            <!-- Header -->
+            <div class="mb-10">
+                <h1 class="text-lg font-bold uppercase tracking-wider text-gray-900">Logo</h1>
+            </div>
+
+            <!-- Title -->
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-medium text-gray-800">Lorem Ipsum</h2>
+            </div>
+
+            <!-- Form -->
+            <div class="flex flex-col gap-6">
+                
+                <!-- From Field -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-sm font-medium text-gray-800 ml-1">From</label>
+                    <div class="sketch-input-group focus-within:ring-2 ring-blue-100 transition-shadow">
+                        <input type="text" placeholder="Departure City" id="input-from">
+                        <div class="addon">
+                            <i class="fa-solid fa-caret-down text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- To Field -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-sm font-medium text-gray-800 ml-1">To</label>
+                    <div class="sketch-input-group focus-within:ring-2 ring-blue-100 transition-shadow">
+                        <input type="text" placeholder="Destination City" id="input-to">
+                        <div class="addon">
+                            <i class="fa-solid fa-caret-down text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dates Row -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Fly out -->
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-gray-800 ml-1">Fly out</label>
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Date" onfocus="(this.type='date')" onblur="(this.type='text')" class="flex-1 border border-gray-400 rounded px-3 py-2 focus:outline-none focus:border-black transition-colors h-[42px]">
+                            <button class="w-[42px] h-[42px] border border-gray-400 rounded flex items-center justify-center text-gray-600 hover:bg-gray-50">
+                                <i class="fa-regular fa-calendar-days text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Fly back -->
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-gray-800 ml-1">Fly back</label>
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Date" onfocus="(this.type='date')" onblur="(this.type='text')" class="flex-1 border border-gray-400 rounded px-3 py-2 focus:outline-none focus:border-black transition-colors h-[42px]">
+                            <button class="w-[42px] h-[42px] border border-gray-400 rounded flex items-center justify-center text-gray-600 hover:bg-gray-50">
+                                <i class="fa-regular fa-calendar-days text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Passengers Row -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Adults -->
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-gray-800 ml-1">Adults</label>
+                        <input type="number" value="1" min="1" class="w-full border border-gray-400 rounded px-3 py-2 h-[42px] focus:outline-none focus:border-black transition-colors">
+                    </div>
+
+                    <!-- Children -->
+                    <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-gray-800 ml-1">Children</label>
+                        <input type="number" value="0" min="0" class="w-full border border-gray-400 rounded px-3 py-2 h-[42px] focus:outline-none focus:border-black transition-colors">
+                    </div>
+                </div>
+
+                <!-- Continue Button -->
+                <div class="mt-8">
+                    <button id="btn-continue" class="w-full border-2 border-gray-800 text-gray-900 font-bold py-3 rounded hover:bg-gray-800 hover:text-white transition-all uppercase tracking-wide shadow-sm active:scale-95">
+                        Continue
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SCREEN 2: RESULTS (Hidden by default) -->
+        <div id="screen-results" class="screen screen-hidden-right flex flex-col bg-gray-50">
+            <!-- Header -->
+            <div class="bg-white p-4 shadow-sm flex items-center gap-4 sticky top-0 z-10">
+                <button id="btn-back" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="fa-solid fa-arrow-left text-gray-700"></i>
+                </button>
+                <div>
+                    <h2 class="font-bold text-lg leading-tight">New York to London</h2>
+                    <p class="text-xs text-gray-500">2 Adults • 1 Child</p>
+                </div>
+            </div>
+
+            <!-- Results List -->
+            <div class="p-4 space-y-4 overflow-y-auto flex-1">
+                
+                <!-- Card 1 -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="text-lg font-bold">08:00</div>
+                        <div class="text-xs text-gray-400 border-b border-gray-300 px-2 pb-1">7h 20m</div>
+                        <div class="text-lg font-bold">15:20</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">A</div>
+                            <span class="text-sm text-gray-600">Airline One</span>
+                        </div>
+                        <span class="text-xl font-bold text-blue-600">$450</span>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="text-lg font-bold">13:45</div>
+                        <div class="text-xs text-gray-400 border-b border-gray-300 px-2 pb-1">6h 55m</div>
+                        <div class="text-lg font-bold">20:40</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">B</div>
+                            <span class="text-sm text-gray-600">Blue Sky</span>
+                        </div>
+                        <span class="text-xl font-bold text-blue-600">$520</span>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="flex justify-between items-center mb-3">
+                        <div class="text-lg font-bold">21:00</div>
+                        <div class="text-xs text-gray-400 border-b border-gray-300 px-2 pb-1">8h 10m</div>
+                        <div class="text-lg font-bold">05:10</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">C</div>
+                            <span class="text-sm text-gray-600">EcoAir</span>
+                        </div>
+                        <span class="text-xl font-bold text-blue-600">$380</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Interaction Logic -->
+    <script>
+        const screenHome = document.getElementById('screen-home');
+        const screenResults = document.getElementById('screen-results');
+        const btnContinue = document.getElementById('btn-continue');
+        const btnBack = document.getElementById('btn-back');
+
+        // Navigate to Results
+        btnContinue.addEventListener('click', () => {
+            // Optional: Add simple validation visual
+            const fromInput = document.getElementById('input-from');
+            if(!fromInput.value) {
+                fromInput.value = "New York"; // Auto-fill for demo
+            }
+            const toInput = document.getElementById('input-to');
+            if(!toInput.value) {
+                toInput.value = "London"; // Auto-fill for demo
+            }
+
+            screenHome.classList.add('screen-hidden-left');
+            screenResults.classList.remove('screen-hidden-right');
+        });
+
+        // Navigate Back
+        btnBack.addEventListener('click', () => {
+            screenHome.classList.remove('screen-hidden-left');
+            screenResults.classList.add('screen-hidden-right');
+        });
+    </script>
+
+    <!-- REMOTE AGENT SCRIPT (REQUIRED) -->
+    <script>
+      window.addEventListener('message', (event) => {
+        const { type, targetSelector, text, actionId } = event.data;
+        let element = document.querySelector(targetSelector);
+        
+        // Robust fallback: Find by text if selector fails
+        if (!element && type !== 'GET_COORDS') {
+          const searchTerms = [targetSelector, text].filter(Boolean);
+          const interactive = document.querySelectorAll('button, a, input, label, [role="button"]');
+          element = Array.from(interactive).find(el => 
+            searchTerms.some(term => el.innerText?.toLowerCase().includes(term.toLowerCase()))
+          );
+        }
+
+        if (type === 'GET_COORDS') {
+          const target = element || document.body;
+          const rect = target.getBoundingClientRect();
+          window.parent.postMessage({ 
+            type: 'COORDS_RESPONSE', 
+            actionId,
+            coords: { x: rect.left + rect.width/2, y: rect.top + rect.height/2 } 
+          }, '*');
+          return;
+        }
+
+        if (!element) return;
+
+        if (type === 'CLICK') {
+          element.click();
+          element.focus();
+        } else if (type === 'TYPE') {
+          element.value = text || '';
+          element.dispatchEvent(new Event('input', { bubbles: true }));
+          element.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+    </script>
+</body>
+</html>
